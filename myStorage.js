@@ -1,20 +1,22 @@
 // made by XGHeaven
 
-(function(window,jQuery){
+(function(window){
 
 	//window localStorage
 	var $ = window.localStorage;
 
 
 	//localStorage constructor
-	var localStorage = function(Domain, Parent){
+	var myStorage = function(Parent, Domain){
 
 		//default domain
-		if (!Domain) Domain = "";
+		if (!Domain && typeof(Domain)!="string") Domain = "anonyDomain";
 
 		//parent myStorage
 		//if parent is void , the default parent is {path:""}
-		if (!Parent) Parent = root;
+		if (!Parent) {
+			console.error("need parent");
+		}
 
 		// var this = {};
 		this.parent = Parent;
@@ -55,12 +57,21 @@
 		}
 
 		//get value depend on path && key
+		//it can be return JSON or string or false
 		this.get = function(key){
-			return this.value[key]==undefined?false:this.value[key];
+
+			var returnValue;
+			try{
+				returnValue = JSON.parse(this.value[key]);
+			}catch(e){
+				returnValue = this.value[key];
+			}
+
+			return returnValue==undefined ? false : returnValue;
 		}
 
 		this.extend = function(Domain){
-			return this.domain[Domain] = new localStorage(Domain, this);
+			return this.domain[Domain] = new myStorage(this, Domain);
 		}
 
 		this.remove = function(elements){
@@ -98,30 +109,25 @@
 		// return body;
 	};
 
-	myStorage = function(root){
-		if (!root) root = {
-			path:""
-		};
+	window.myStorage = (function(root){
 
-		var ls = new localStorage();
+		var ls = new myStorage({path:""},"");
 		for (var key in $){
 			var value = $[key];
 			var path = key.match(/([0-9a-zA-Z_$]+)\/??/g);
 			console.log(path);
 			var temp = ls;
 			for (var i=0;i<path.length-1;i++){
-				if (!temp.domain[path[i]]) temp.domain[path[i]] = new localStorage(path[i], temp);
+				if (!temp.domain[path[i]]) temp.domain[path[i]] = new myStorage(temp, path[i]);
 				// if (!temp[path[i]]) temp[path[i]] = {};
 				temp = temp.domain[path[i]];
 			}
 			temp.value[path[path.length-1]] = value;
 			console.log(temp);
 		}
-		return ls;
-	};
 
-	myStorage.clear = function(){
-		$.clear();
-	};
+		return ls;
+
+	})();
 
 })(window);

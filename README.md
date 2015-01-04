@@ -10,10 +10,10 @@ And first , you must link it in your html.
 <script src="myStorage.js" type="text/javascript"></script>
 ```
 
-Then , you need instance `myStorage` in your script.
+Then , you need get `myStorage` in your script.
 
 ```
-var mystorage = myStorage();
+var mystorage = myStorage;
 ```
 
 It default create use localStorage path "/" without args;
