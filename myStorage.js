@@ -16,10 +16,9 @@
 	var myStorage = function(Parent, Domain){
 
 		//default domain
-		if (!Domain && typeof(Domain)!="string") Domain = "anonyDomain";
+		if (typeof(Domain) != "string") Domain = "anonyDomain";
 
 		//parent myStorage
-		//if parent is void , the default parent is {path:""}
 		if (!Parent) {
 			console.error("need parent");
 		}
@@ -43,10 +42,6 @@
 
 		// return body;
 	};
-
-	myStorage.prototype.clone = function(){
-		return this.path;
-	}
 
 	//set values
 	myStorage.prototype.set = function(key, value){
@@ -76,6 +71,11 @@
 	//it can be return JSON or string or false
 	myStorage.prototype.get = function(key){
 
+		if (!key || typeof(key)!="string"){
+			db && console.log("key is incorrect");
+			return false;
+		}
+
 		var returnValue;
 		try{
 			returnValue = JSON.parse(this.value[key]);
@@ -87,7 +87,21 @@
 	}
 
 	myStorage.prototype.extend = function(Domain){
-		return this.domain[Domain] = new myStorage(this, Domain);
+
+		if (!Domain || typeof(Domain)!="string") {
+			db && console.log("Domain is incorrect");
+			return this;
+		}
+
+		if (this.domain[Domain]) {
+			return this.domain[Domain];
+		} else {
+			return this.domain[Domain] = new myStorage(this, Domain);
+		}
+	}
+
+	myStorage.prototype.getdomain = function(Domain){
+		return this.domain[Domain];
 	}
 
 	myStorage.prototype.remove = function(elements){
@@ -120,6 +134,10 @@
 		return this;
 	}
 
+	myStorage.prototype.isset = function(key){
+		return !!this.value[key];
+	}
+
 	window.myStorage = function(root){
 
 		root = root || "myStorage";
@@ -150,7 +168,7 @@
 				_st = _st.domain[path[i]];
 			}
 			_st.value[path[path.length-1]] = $[key];
-			console.log(_st);
+			db && console.log(_st);
 		}
 
 		return st;
