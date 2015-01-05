@@ -41,88 +41,83 @@
 
 		// this.myStorage = version;
 
-
-		//set values
-		this.set = function(key, value){
-
-			//convert string to object for key
-			if (typeof(key) != "object"){
-				key = (function(temp){
-					temp[key] = value;
-					return temp;
-				})({});
-			}
-
-			//set value
-			for (var k in key){
-				var v = key[k];
-				if (typeof(v) === "object"){
-					this.value[k] = $[this.path + k] = JSON.stringify(v);
-				}else{
-					this.value[k] = $[this.path + k] = v;
-				}
-			}
-
-			return this;
-		}
-
-		//get value depend on path && key
-		//it can be return JSON or string or false
-		this.get = function(key){
-
-			var returnValue;
-			try{
-				returnValue = JSON.parse(this.value[key]);
-			}catch(e){
-				returnValue = this.value[key];
-			}
-
-			return returnValue==undefined ? false : returnValue;
-		}
-
-		this.extend = function(Domain){
-			return this.domain[Domain] = new myStorage(this, Domain);
-		}
-
-		this.remove = function(elements){
-			if (typeof(elements) != "object"){
-				elements = [elements];
-			}
-
-			for (k in elements){
-				var ele = elements[k];
-				if (this.value[ele]){
-					$.removeItem(this.path + ele);
-					delete this.value[ele];
-				}else if (this.domain[ele]){
-					this.domain[ele].clear();
-					delete this.domain[k];
-				}
-			}
-			return this;
-		}
-
-		this.clear = function(){
-			for (var k in this.domain){
-				this.domain[k].clear();
-				delete this.domain[k];
-			}
-			for (var k in this.value){
-				$.removeItem(this.path + k);
-				delete this.value[k];
-			}
-			return this;
-		}
-
-		// this.close = function(){
-		// 	console.log(delete this);
-		// }
-
 		// return body;
 	};
 
 	myStorage.prototype.clone = function(){
 		return this.path;
+	}
+
+	//set values
+	myStorage.prototype.set = function(key, value){
+
+		//convert string to object for key
+		if (typeof(key) != "object"){
+			key = (function(temp){
+				temp[key] = value;
+				return temp;
+			})({});
+		}
+
+		//set value
+		for (var k in key){
+			var v = key[k];
+			if (typeof(v) === "object"){
+				this.value[k] = $[this.path + k] = JSON.stringify(v);
+			}else{
+				this.value[k] = $[this.path + k] = v;
+			}
+		}
+
+		return this;
+	}
+
+	//get value depend on path && key
+	//it can be return JSON or string or false
+	myStorage.prototype.get = function(key){
+
+		var returnValue;
+		try{
+			returnValue = JSON.parse(this.value[key]);
+		}catch(e){
+			returnValue = this.value[key];
+		}
+
+		return returnValue==undefined ? false : returnValue;
+	}
+
+	myStorage.prototype.extend = function(Domain){
+		return this.domain[Domain] = new myStorage(this, Domain);
+	}
+
+	myStorage.prototype.remove = function(elements){
+		if (typeof(elements) != "object"){
+			elements = [elements];
+		}
+
+		for (k in elements){
+			var ele = elements[k];
+			if (this.value[ele]){
+				$.removeItem(this.path + ele);
+				delete this.value[ele];
+			}else if (this.domain[ele]){
+				this.domain[ele].clear();
+				delete this.domain[k];
+			}
+		}
+		return this;
+	}
+
+	myStorage.prototype.clear = function(){
+		for (var k in this.domain){
+			this.domain[k].clear();
+			delete this.domain[k];
+		}
+		for (var k in this.value){
+			$.removeItem(this.path + k);
+			delete this.value[k];
+		}
+		return this;
 	}
 
 	window.myStorage = function(root){
