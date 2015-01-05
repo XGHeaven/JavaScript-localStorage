@@ -86,6 +86,7 @@
 		return returnValue==undefined ? false : returnValue;
 	}
 
+	//create new domain through this
 	myStorage.prototype.extend = function(Domain){
 
 		if (!Domain || typeof(Domain)!="string") {
@@ -100,10 +101,14 @@
 		}
 	}
 
+	//get have been created domain
+	//if it don't exist, return false.
 	myStorage.prototype.getdomain = function(Domain){
-		return this.domain[Domain];
+		return this.domain[Domain] || false;
 	}
 
+	//remove elements from myStorage
+	//elements can be a array
 	myStorage.prototype.remove = function(elements){
 		if (typeof(elements) != "object"){
 			elements = [elements];
@@ -122,6 +127,7 @@
 		return this;
 	}
 
+	//clear this myStorage
 	myStorage.prototype.clear = function(){
 		for (var k in this.domain){
 			this.domain[k].clear();
@@ -134,10 +140,13 @@
 		return this;
 	}
 
+	//check if key if in the value
 	myStorage.prototype.isset = function(key){
 		return !!this.value[key];
 	}
 
+
+	//main myStorage
 	window.myStorage = function(root){
 
 		root = root || "myStorage";
