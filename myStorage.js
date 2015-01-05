@@ -2,9 +2,15 @@
 
 (function(window){
 
+	//debug
+	var db = true;
+
 	//window localStorage
 	var $ = window.localStorage;
 
+	var stack = [];
+
+	var version = "1.0";
 
 	//localStorage constructor
 	var myStorage = function(Parent, Domain){
@@ -33,6 +39,8 @@
 		//values content
 		this.value = {};
 
+		// this.myStorage = version;
+
 
 		//set values
 		this.set = function(key, value){
@@ -54,6 +62,8 @@
 					this.value[k] = $[this.path + k] = v;
 				}
 			}
+
+			return this;
 		}
 
 		//get value depend on path && key
@@ -89,6 +99,7 @@
 					delete this.domain[k];
 				}
 			}
+			return this;
 		}
 
 		this.clear = function(){
@@ -100,6 +111,7 @@
 				$.removeItem(this.path + k);
 				delete this.value[k];
 			}
+			return this;
 		}
 
 		// this.close = function(){
@@ -109,25 +121,45 @@
 		// return body;
 	};
 
-	window.myStorage = (function(root){
+	myStorage.prototype.clone = function(){
+		return this.path;
+	}
 
-		var ls = new myStorage({path:""},"");
-		for (var key in $){
-			var value = $[key];
-			var path = key.match(/([0-9a-zA-Z_$]+)\/??/g);
-			console.log(path);
-			var temp = ls;
-			for (var i=0;i<path.length-1;i++){
-				if (!temp.domain[path[i]]) temp.domain[path[i]] = new myStorage(temp, path[i]);
-				// if (!temp[path[i]]) temp[path[i]] = {};
-				temp = temp.domain[path[i]];
+	window.myStorage = function(root){
+
+		root = root || "myStorage";
+
+		var key,value,path,st,_st,i;
+
+		for (key in stack){
+			if (stack[key].name == root){
+				return stack[key];
 			}
-			temp.value[path[path.length-1]] = value;
-			console.log(temp);
+		}
+		st = new myStorage({path:""},root);
+		stack.push(st);
+
+		for (key in $) {
+			path = key.match(/([0-9a-zA-Z_$]+)\/??/g);
+			db && console.log(path);
+
+			if (path[0] != root) {
+				break;
+			}
+
+			_st = st;
+
+			for (i=1; i<path.length-1; i++) {
+				if (!_st.domain[path[i]]) _st.domain[path[i]] = new myStorage(_st, path[i]);
+				// if (!temp[path[i]]) temp[path[i]] = {};
+				_st = _st.domain[path[i]];
+			}
+			_st.value[path[path.length-1]] = $[key];
+			console.log(_st);
 		}
 
-		return ls;
+		return st;
 
-	})();
+	};
 
 })(window);

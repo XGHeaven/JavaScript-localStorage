@@ -64,6 +64,42 @@ This is a simple document to use it quickly.
 3. there have many elements in a domain, and a domain alse can include other domains as child domain. you can get it out as a indenpendent myStorage instance.
 4. you can also change it by youself.
 
+# More Detail
+
+## Store in localStorage
+Everything must be store in a root tree.  
+The root tree default called `myStorage`  
+You can rename it when you instance it from myStorage through give it a string parament;
+
+		var mystorage = new myStorage("root");
+
+If this root was created ,It return `myStorage` which created in the past. If not ,It will return a new `myStorage`.
+
+It store in localStorage like this.
+
+`/root/DOMAIN:"1.0"`
+
+
+
+## Structure in myStorage
+
+It like a tree. Every tree node have many attributes and methods.
+
+*	attributes  
+	* name -> string
+	* path -> string
+	* value -> array
+	* domain -> array
+	* parent -> myStorage
+*	methods
+	* get(string) -> value
+	* set(string,value) -> myStorage
+	* extend(string) -> myStorage
+	* remove(string) -> myStorage
+	* clear() -> myStorage
+
+> `value` is object, string or other type
+
 # thanks for you
 
 this is a semi-finished product , so I hope you can wait for me to complete it.
